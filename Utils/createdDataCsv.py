@@ -5,6 +5,7 @@ import random
 from sklearn.decomposition import PCA
 from Utils.enumerated import type_reduction
 from sklearn.manifold import TSNE
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 
 class createdData():
     @staticmethod
@@ -12,6 +13,7 @@ class createdData():
         array_data = []
         pca = PCA(n_components=1)
         tsne = TSNE(n_components=1, verbose=1, perplexity=2)
+        lda = LinearDiscriminantAnalysis()
         for bacth in dataset_input:
             face = bacth['face'].numpy()
             audio = bacth['audio'].numpy()
@@ -24,16 +26,27 @@ class createdData():
             elif type_reduction_input == type_reduction.take_minimus:
                 input = [min(face),min(audio), min(text), min(label)]
                 array_data.append(input)
+            elif type_reduction_input == type_reduction.average:
+                input = [np.mean(face),np.mean(audio), np.mean(text), min(label)]
+                array_data.append(input)
             elif type_reduction_input == type_reduction.PCA:
                 input = np.concatenate(([face], [audio], [text]), axis=0)
                 input= pca.fit_transform(input)
                 array_data.append([max(input[0]), max(input[1]),max(input[2]), max(label)])
-            else:
+            elif type_reduction_input == type_reduction.tsne:
                 input =np.concatenate(([face], [audio], [text]), axis=0)
                 input = tsne.fit_transform(input)
                 input = input.flatten()
                 print(input)
                 array_data.append([input[0], input[1], input[2], max(label)])
+            elif type_reduction_input == type_reduction.lda:
+                eqtiquets = [0, 1, 2]
+                input = [[min(face), np.mean(face), max(face)], [max(audio), np.mean(audio),min(audio)], [max(text), np.mean(text), min(text)]]
+                input = lda.fit_transform(input,eqtiquets)
+                input = input.flatten()
+                array_data.append([input[0], input[1], input[2], max(label)])
+
+
 
 
 

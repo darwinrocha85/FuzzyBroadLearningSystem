@@ -27,5 +27,5 @@ test_dataset = DatasetIEMOCAP(classes, face_data, audi_data,
 
 
 
-createdData.creadtes_file(train_dataset, "training", porcentaje_input=0.5,type_reduction_input=type_reduction.PCA)
-createdData.creadtes_file(test_dataset, "test", porcentaje_input=0.5,type_reduction_input=type_reduction.PCA)
+createdData.creadtes_file(train_dataset, "training", porcentaje_input=0.5,type_reduction_input=type_reduction.average)
+createdData.creadtes_file(test_dataset, "test", porcentaje_input=0.5,type_reduction_input=type_reduction.average)
