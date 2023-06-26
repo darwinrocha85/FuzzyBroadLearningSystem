@@ -3,6 +3,7 @@ from os.path import join
 from Datasets.IEMOCAP import DatasetIEMOCAP
 from Utils.createdDataCsv import createdData
 from Utils.FusionTransformer import FusionTransformer
+from Utils.enumerated import type_reduction
 
 classes = {'exc':0, 'neu':1, 'sad':2, 'hap':0, 'ang':3, 'number': 4}
 
@@ -24,5 +25,7 @@ test_dataset = DatasetIEMOCAP(classes, face_data, audi_data,
                               text_data, 'average', mode = 'test',
                               transform=FusionTransformer(''))
 
-createdData.creadtes_file(train_dataset, "training", porcentaje_input=0.5)
-createdData.creadtes_file(test_dataset, "test", porcentaje_input=0.5)
+
+
+createdData.creadtes_file(train_dataset, "training", porcentaje_input=0.5,type_reduction_input=type_reduction.PCA)
+createdData.creadtes_file(test_dataset, "test", porcentaje_input=0.5,type_reduction_input=type_reduction.PCA)
