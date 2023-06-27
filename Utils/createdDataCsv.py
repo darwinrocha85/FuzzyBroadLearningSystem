@@ -39,15 +39,9 @@ class createdData():
                 input = input.flatten()
                 print(input)
                 array_data.append([input[0], input[1], input[2], max(label)])
-            elif type_reduction_input == type_reduction.lda:
-                eqtiquets = [0, 1, 2]
-                input = [[min(face), np.mean(face), max(face)], [max(audio), np.mean(audio),min(audio)], [max(text), np.mean(text), min(text)]]
-                input = lda.fit_transform(input,eqtiquets)
-                input = input.flatten()
-                array_data.append([input[0], input[1], input[2], max(label)])
-
-
-
+            elif type_reduction_input == type_reduction.max_positions:
+                input = [torch.argmax(bacth['face'], dim=-1).numpy(), torch.argmax(bacth['audio'], dim=-1).numpy(), torch.argmax(bacth['text'], dim=-1).numpy(), min(label)]
+                array_data.append(input)
 
 
 

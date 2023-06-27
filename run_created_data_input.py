@@ -25,7 +25,5 @@ test_dataset = DatasetIEMOCAP(classes, face_data, audi_data,
                               text_data, 'average', mode = 'test',
                               transform=FusionTransformer(''))
 
-
-
-createdData.creadtes_file(train_dataset, "training", porcentaje_input=0.5,type_reduction_input=type_reduction.average)
-createdData.creadtes_file(test_dataset, "test", porcentaje_input=0.5,type_reduction_input=type_reduction.average)
+createdData.creadtes_file(train_dataset, "training", porcentaje_input=0.5,type_reduction_input=type_reduction.max_positions)
+createdData.creadtes_file(test_dataset, "test", porcentaje_input=0.5,type_reduction_input=type_reduction.max_positions)
