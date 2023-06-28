@@ -66,7 +66,7 @@ def bls_train(
         b1 = Alpha[i]
         t_y = np.zeros((train_x.shape[0], NumRule))
 
-        center_list = KMeans(n_clusters=i).fit(train_x).cluster_centers_
+        center_list = KMeans(n_clusters=NumRule).fit(train_x).cluster_centers_
         print("******************", center_list)
         print("******************", len(center_list))
         CENTER = list(center_list)
