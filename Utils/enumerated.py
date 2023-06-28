@@ -6,5 +6,6 @@ class type_reduction(Enum):
   take_minimus = 2
   PCA = 3
   tsne= 4
-  max_positions = 5 #Linear Discriminant Analysis
+  max_positions = 5
   average=6
+  take_maximus = 7

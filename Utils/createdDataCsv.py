@@ -42,7 +42,9 @@ class createdData():
             elif type_reduction_input == type_reduction.max_positions:
                 input = [torch.argmax(bacth['face'], dim=-1).numpy(), torch.argmax(bacth['audio'], dim=-1).numpy(), torch.argmax(bacth['text'], dim=-1).numpy(), min(label)]
                 array_data.append(input)
-
+            elif type_reduction_input == type_reduction.take_maximus:
+                input = [max(face),max(audio), max(text), max(label)]
+                array_data.append(input)
 
 
 

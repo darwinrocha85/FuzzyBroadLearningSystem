@@ -55,27 +55,34 @@ def bls_train(
 
     y = np.zeros((H1.shape[0], NumFuzz * NumRule))
 
-    CENTER = []
+    CENTER  = []
     ps = []
 
-    for i in range(NumFuzz):
+    # K-means clustering
+    # K-means clustering
+
+
+    for i in range(1,NumFuzz):
         b1 = Alpha[i]
         t_y = np.zeros((train_x.shape[0], NumRule))
 
-        # K-means clustering
-        fcm = cmeans(train_x, NumRule, 0.5, error=0.005, maxiter=100)
-        center = fcm[0]
-
-        CENTER.append(center)
+        center_list = KMeans(n_clusters=i).fit(train_x).cluster_centers_
+        print("******************", center_list)
+        print("******************", len(center_list))
+        CENTER = list(center_list)
+        center = CENTER[0]
+        if len(CENTER) > 1:
+            center = CENTER[1]
 
         for j in range(train_x.shape[0]):
+
             ten2 = np.tile(train_x[j, :], (NumRule, 1))
             ten = len(train_x[j])
             MF = np.exp(
                 -np.power(
                     np.subtract(
                         ten2,
-                        np.tile(center[:, j], (ten, 1)).T,
+                        center,
                     ),
                     2,
                 )
@@ -127,17 +134,19 @@ def bls_train(
 
     yy1 = np.zeros((test_x.shape[0], NumFuzz * NumRule))
 
-    for i in range(NumFuzz):
+    for i in range(1,NumFuzz):
         b1 = Alpha[i]
         t_y = np.zeros((test_x.shape[0], NumRule))
-        center = CENTER[i]
+        center = CENTER[0]
+        if len(CENTER) > 1:
+            center = CENTER[1]
         for j in range(test_x.shape[0]):
             MF = np.exp(-((np.tile(test_x[j, :], (NumRule, 1)) - center.T) ** 2) / std)
             MF = np.prod(MF, axis=1)
             MF = MF / np.sum(MF)
             t_y[j, :] = MF[0] * (test_x[j, :] @ b1)[0]
 
-        ps1 = ps[i]
+        ps1 = ps[i-1]
         scaler = MinMaxScaler()
         TT1 = scaler.fit_transform(t_y)
         del scaler
@@ -161,7 +170,7 @@ def bls_train(
     print("The Total Testing Time is :", Testing_time, "seconds")
     print("Testing Accuracy is :", TestingAccuracy * 100, "%")
 
-    return NetoutTest, Training_time, Testing_time, TrainingAccuracy, TestingAccuracy
+    return NetoutTest, Training_time, Testing_time, TrainingAccuracy, TestingAccuracy * 100
 
 
 np.set_printoptions(precision=4, suppress=True)
@@ -210,17 +219,17 @@ test_y = (test_y - 1) * 2 + 1
 
 C = 2**-30  # C: the regularization parameter for sparse regularization
 s = 0.8  # s: the shrinkage parameter for enhancement nodes
-best = 0.72
+best = 72
 result = []
 for NumRule in range(1, 5):  # searching range for fuzzy rules per fuzzy subsystem
-    for NumFuzz in range(1, 5):  # searching range for number of fuzzy subsystems
-        for NumEnhan in range(1, 5):  # searching range for enhancement nodes
+    for NumFuzz in range(1, 4):  # searching range for number of fuzzy subsystems
+        for NumEnhan in range(1, 2):  # searching range for enhancement nodes
             print(
                 f"Fuzzy rule No. = {NumRule}, Fuzzy system No. = {NumFuzz}, Enhan. No. = {NumEnhan}"
             )
             seed(1)
             Alpha = {}
-            for i in range(NumFuzz):
+            for i in range(1,NumFuzz):
                 alpha = np.random.rand(train_x.shape[1], NumRule)
                 Alpha[i] = alpha
             # generating coefficients of the then part of fuzzy rules for each fuzzy system
@@ -264,4 +273,9 @@ for NumRule in range(1, 5):  # searching range for fuzzy rules per fuzzy subsyst
                     time=time,
                 )
 
-print(result)
+X = [0,0,0,0,0]
+for item in result:
+    if item[4] > X[4]:
+        X = item
+
+print(X)
