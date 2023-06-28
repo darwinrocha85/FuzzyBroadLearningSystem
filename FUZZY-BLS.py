@@ -90,6 +90,7 @@ def bls_train(
         [T1, ps1] = mapminmax(t_y, 0, 1)
         ps.append(ps1)
 
+        print("T1.shape", T1.shape)
         y[:, NumRule * (i - 1) : NumRule * i] = T1
 
     H1 = []
@@ -211,7 +212,7 @@ C = 2**-30  # C: the regularization parameter for sparse regularization
 s = 0.8  # s: the shrinkage parameter for enhancement nodes
 best = 0.72
 result = []
-for NumRule in range(1, 2):  # searching range for fuzzy rules per fuzzy subsystem
+for NumRule in range(1, 5):  # searching range for fuzzy rules per fuzzy subsystem
     for NumFuzz in range(1, 5):  # searching range for number of fuzzy subsystems
         for NumEnhan in range(1, 5):  # searching range for enhancement nodes
             print(
