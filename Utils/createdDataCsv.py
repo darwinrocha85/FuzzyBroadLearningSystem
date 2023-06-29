@@ -12,8 +12,6 @@ class createdData():
     def creadtes_file(dataset_input, type_data_input="training", porcentaje_input=0.5, type_reduction_input=type_reduction.not_reduction):
         array_data = []
         pca = PCA(n_components=1)
-        tsne = TSNE(n_components=1, verbose=1, perplexity=2)
-        lda = LinearDiscriminantAnalysis()
         for bacth in dataset_input:
             face = bacth['face'].numpy()
             audio = bacth['audio'].numpy()
@@ -23,27 +21,12 @@ class createdData():
             if type_reduction_input == type_reduction.not_reduction:
                 input = np.concatenate((face,audio, text, label), axis=0)
                 array_data.append(input)
-            elif type_reduction_input == type_reduction.take_minimus:
-                input = [min(face),min(audio), min(text), min(label)]
-                array_data.append(input)
-            elif type_reduction_input == type_reduction.average:
-                input = [np.mean(face),np.mean(audio), np.mean(text), min(label)]
-                array_data.append(input)
             elif type_reduction_input == type_reduction.PCA:
                 input = np.concatenate(([face], [audio], [text]), axis=0)
                 input= pca.fit_transform(input)
-                array_data.append([max(input[0]), max(input[1]),max(input[2]), max(label)])
-            elif type_reduction_input == type_reduction.tsne:
-                input =np.concatenate(([face], [audio], [text]), axis=0)
-                input = tsne.fit_transform(input)
-                input = input.flatten()
-                print(input)
-                array_data.append([input[0], input[1], input[2], max(label)])
-            elif type_reduction_input == type_reduction.max_positions:
-                input = [torch.argmax(bacth['face'], dim=-1).numpy(), torch.argmax(bacth['audio'], dim=-1).numpy(), torch.argmax(bacth['text'], dim=-1).numpy(), min(label)]
-                array_data.append(input)
+                array_data.append([ max(label),max(input[0]), max(input[1]),max(input[2])])
             elif type_reduction_input == type_reduction.take_maximus:
-                input = [max(face),max(audio), max(text), max(label)]
+                input = [max(label),max(face),max(audio), max(text)]
                 array_data.append(input)
 
 
@@ -65,23 +48,23 @@ class createdData():
             df = pd.DataFrame(lista_1)
 
             # Escribir el DataFrame en un archivo CSV
-            df.to_csv('test_archivo_1.csv', index=False)
+            df.to_csv('test_archivo_1.csv', index=False, header=False)
 
             # Crear un DataFrame de pandas a partir del arreglo
             df = pd.DataFrame(lista_2)
 
             # Escribir el DataFrame en un archivo CSV
-            df.to_csv('test_archivo_2.csv', index=False)
+            df.to_csv('test_archivo_2.csv', index=False, header=False)
 
         else:
             # Crear un DataFrame de pandas a partir del arreglo
             df = pd.DataFrame(lista_1)
 
             # Escribir el DataFrame en un archivo CSV
-            df.to_csv('train_archivo_1.csv', index=False)
+            df.to_csv('train_archivo_1.csv', index=False, header=False)
 
             # Crear un DataFrame de pandas a partir del arreglo
             df = pd.DataFrame(lista_2)
 
             # Escribir el DataFrame en un archivo CSV
-            df.to_csv('train_archivo_2.csv', index=False)
+            df.to_csv('train_archivo_2.csv', index=False, header=False)
