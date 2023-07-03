@@ -11,7 +11,8 @@ class createdData():
     @staticmethod
     def creadtes_file(dataset_input, type_data_input="training", porcentaje_input=0.5, type_reduction_input=type_reduction.not_reduction):
         array_data = []
-        pca = PCA(n_components=1)
+        array_data_label = []
+
         for bacth in dataset_input:
             face = bacth['face'].numpy()
             audio = bacth['audio'].numpy()
@@ -19,52 +20,35 @@ class createdData():
             label = torch.argmax(bacth['label'], dim=-1).numpy()
             label = np.ravel(label)
             if type_reduction_input == type_reduction.not_reduction:
-                input = np.concatenate((face,audio, text, label), axis=0)
+                input = np.concatenate((face, audio, text), axis=0)
                 array_data.append(input)
-            elif type_reduction_input == type_reduction.PCA:
-                input = np.concatenate(([face], [audio], [text]), axis=0)
-                input= pca.fit_transform(input)
-                array_data.append([ max(label),max(input[0]), max(input[1]),max(input[2])])
-            elif type_reduction_input == type_reduction.take_maximus:
-                input = [max(label),max(face),max(audio), max(text)]
-                array_data.append(input)
+                array_data_label.append(label)
 
 
-
-        # Obtener el tamaño de la lista y calcular la cantidad de elementos para cada porcentaje
-        total_elements = len(array_data)
-        porcentaje = int(porcentaje_input * total_elements)
-
-        # Barajar (shuffle) la lista de forma aleatoria
-        random.shuffle(array_data)
-
-        # Dividir la lista en dos listas basadas en los porcentajes
-        lista_1 = array_data[:porcentaje]
-        lista_2 = array_data[porcentaje:]
 
         if type_data_input == "test":
 
             # Crear un DataFrame de pandas a partir del arreglo
-            df = pd.DataFrame(lista_1)
+            df = pd.DataFrame(array_data)
 
             # Escribir el DataFrame en un archivo CSV
             df.to_csv('test_archivo_1.csv', index=False, header=False)
 
             # Crear un DataFrame de pandas a partir del arreglo
-            df = pd.DataFrame(lista_2)
+            df = pd.DataFrame(array_data_label)
 
             # Escribir el DataFrame en un archivo CSV
             df.to_csv('test_archivo_2.csv', index=False, header=False)
 
         else:
             # Crear un DataFrame de pandas a partir del arreglo
-            df = pd.DataFrame(lista_1)
+            df = pd.DataFrame(array_data)
 
             # Escribir el DataFrame en un archivo CSV
             df.to_csv('train_archivo_1.csv', index=False, header=False)
 
             # Crear un DataFrame de pandas a partir del arreglo
-            df = pd.DataFrame(lista_2)
+            df = pd.DataFrame(array_data_label)
 
             # Escribir el DataFrame en un archivo CSV
             df.to_csv('train_archivo_2.csv', index=False, header=False)
