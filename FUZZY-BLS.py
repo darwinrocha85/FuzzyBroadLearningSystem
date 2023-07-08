@@ -47,54 +47,59 @@ C = 2**-10  # C: the regularization parameter for sparse regularization
 s = 0.8  # s: the shrinkage parameter for enhancement nodes
 best = 72
 result = []
-for NumRule in range(1, 20):  # searching range for fuzzy rules per fuzzy subsystem
-    for NumFuzz in range(1, 20):  # searching range for number of fuzzy subsystems
-        for NumEnhan in range(1, 20):  # searching range for enhancement nodes
-            print(
-                f"Fuzzy rule No. = {NumRule}, Fuzzy system No. = {NumFuzz}, Enhan. No. = {NumEnhan}"
-            )
-            seed(1)
-            Alpha = {}
-            for i in range(0,NumFuzz):
-                alpha = np.random.rand(train_x.shape[1], NumRule)
-                Alpha[i] = alpha
-            # generating coefficients of the then part of fuzzy rules for each fuzzy system
+TrainingAccuracy_best = 0
+TestingAccuracy_best = 0
+with open('archivo_salida.txt', 'w+') as f:
+    for NumRule in range(1, 5):  # searching range for fuzzy rules per fuzzy subsystem
+        for NumFuzz in range(1, 5):  # searching range for number of fuzzy subsystems
+            for NumEnhan in range(1, 5):  # searching range for enhancement nodes
+                print(
+                    f"Fuzzy rule No. = {NumRule}, Fuzzy system No. = {NumFuzz}, Enhan. No. = {NumEnhan}"
+                )
+                seed(1)
+                Alpha = {}
+                for i in range(0,NumFuzz):
+                    alpha = np.random.rand(train_x.shape[1], NumRule)
+                    Alpha[i] = alpha
+                # generating coefficients of the then part of fuzzy rules for each fuzzy system
 
-            WeightEnhan = np.random.rand( NumFuzz * NumRule + 1, NumEnhan)  # Initializing weights connecting fuzzy subsystems with enhancement layer
+                WeightEnhan = np.random.rand( NumFuzz * NumRule + 1, NumEnhan)  # Initializing weights connecting fuzzy subsystems with enhancement layer
 
-            (
-                NetoutTest,
-                Training_time,
-                Testing_time,
-                TrainingAccuracy,
-                TestingAccuracy,
-            ) = fbls.bls_train(
-                train_x,
-                train_y,
-                test_x,
-                test_y,
-                Alpha,
-                WeightEnhan,
-                s,
-                C,
-                NumRule,
-                NumFuzz,
-            )
+                (
+                    NetoutTest,
+                    Training_time,
+                    Testing_time,
+                    TrainingAccuracy,
+                    TestingAccuracy,
+                ) = fbls.bls_train(
+                    train_x,
+                    train_y,
+                    test_x,
+                    test_y,
+                    Alpha,
+                    WeightEnhan,
+                    s,
+                    C,
+                    NumRule,
+                    NumFuzz,
+                )
 
-            time_1 = Training_time + Testing_time
-            result.append(
-                [NumRule, NumFuzz, NumEnhan, TrainingAccuracy, TestingAccuracy]
-            )
-            if best < TestingAccuracy:
-                best = TestingAccuracy
+                time_1 = Training_time + Testing_time
+                result.append(
+                    [NumRule, NumFuzz, NumEnhan, TrainingAccuracy, TestingAccuracy]
 
+                )
+                if TrainingAccuracy_best < TrainingAccuracy:
+                    best_training = [NumRule, NumFuzz, NumEnhan, TrainingAccuracy*100, TestingAccuracy*100]
+                    TrainingAccuracy_best = TrainingAccuracy
 
-print(TestingAccuracy)
-print(result)
-X = [0,0,0,0,0]
-for item in result:
-    if item[4] > X[4]:
-        X = item
+                if TestingAccuracy_best < TestingAccuracy:
+                    best_testing = [NumRule, NumFuzz, NumEnhan, TrainingAccuracy*100, TestingAccuracy*100]
+                    TestingAccuracy_best = TestingAccuracy
 
-print("Best result:")
-print(X)
+                print([NumRule, NumFuzz, NumEnhan, TrainingAccuracy*100, TestingAccuracy*100],  file=f)
+                if best < TestingAccuracy:
+                    best = TestingAccuracy
+
+print("Best Training Accuracy: ", best_training)
+print("Best Testing Accuracy: ", best_testing)
